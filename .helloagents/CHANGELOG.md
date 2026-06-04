@@ -1,6 +1,22 @@
 ## [Unreleased] - 2026-04-18
 
 ### 变更
+- **[browser_extension]**: 加固 `bridge.html` 降级消息通道，bridge 请求增加来源白名单，响应不再使用通配符 `postMessage`；同时补齐项目级与扩展模块 `DESIGN.md`，并忽略本地 CLI 日志和扩展验证产物。
+  - 文件: `apps/extension/bridge.js`, `apps/extension/content.js`, `DESIGN.md`, `apps/extension/DESIGN.md`, `.gitignore`, `.helloagents/modules/browser_extension.md`
+- **[browser_extension]**: 修复页面内运营助手在浏览器窗口高度不足时顶部被外层 fixed 面板顶出可视区的问题；面板定位改为 `top + bottom` 自适应高度，不再用固定 `780px` 高度叠加底部偏移。
+  - 文件: `apps/extension/content.js`
+- **[browser_extension]**: 修复右下角页面内运营助手打开后顶部标题/说明被旧滚动位置截掉的问题；embedded Popup 禁用浏览器滚动恢复并在加载完成后回到顶部，页面面板每次展开时也主动将 iframe 滚回顶部。
+  - 文件: `apps/extension/popup.js`, `apps/extension/content.js`
+- **[browser_extension]**: 修复右下角页面内运营助手 iframe 进入后只显示“打开设置页”的问题；`popup.js` 现在会保留并归一化 `authToken`、`authUser`、`currentShop`、`shops` 和 `authenticated`，避免 embedded 模式把已登录配置洗成未登录。
+  - 文件: `apps/extension/popup.js`
+- **[browser_extension]**: 缩小三平台房型映射预览中单个映射组的占用空间；映射卡片改为紧凑样式，三平台格子固定同排展示，房间介绍限制两行并压缩最终价输入区域。
+  - 文件: `apps/extension/popup.html`, `apps/extension/popup.js`
+- **[browser_extension]**: 三平台价格映射预览中，平台格子不再优先展示抓取后的现价，而是展示从商家后台行文本或详情字段清洗出的房间介绍；最终价输入、勾选提交和按当前价填充逻辑保持不变。
+  - 文件: `apps/extension/popup.html`, `apps/extension/popup.js`
+- **[browser_extension]**: 将商家改价彻底拆成独立三平台工作流：Popup 直接读取飞猪、携程、美团商家价格页 URL，扩展侧批量采集平台房型价、自动生成映射、支持勾选与编辑最终价，并通过新消息 `MERCHANT_PLATFORM_PRICE_SNAPSHOTS` / `MERCHANT_PLATFORM_MAPPING_SUBMIT` 完成确认后提交；基础功能仍保持原有竞对采集和建议价链路不变。
+  - 文件: `apps/extension/popup.html`, `apps/extension/popup.js`, `apps/extension/background.js`
+- **[browser_extension]**: 按简单试点方式将商家一键改价平台扩展到飞猪、携程、美团；插件 Manifest 增加携程/美团域名权限，Popup 增加平台选择，background 按平台查找本地已登录商家后台页，content/page-context 放宽商家后台识别。携程/美团本轮复用通用 DOM 读取与回填链路，不新增后端接口，未执行真实平台提交测试。
+  - 文件: `apps/extension/manifest.json`, `apps/extension/popup.html`, `apps/extension/popup.js`, `apps/extension/background.js`, `apps/extension/content.js`, `apps/extension/content/page-context.js`, `apps/extension/options.js`, `apps/extension/README.md`
 - **[browser_extension]**: 修复右下角页面浮层加载本地 `popup.html?embedded=1` 后空白的问题；`manifest.json` 的 `web_accessible_resources` 补充 `popup.js` 与 `content/result-view.js`，确保 iframe 内完整 Popup 工作台可以加载依赖脚本。
   - 文件: `apps/frontend/extension/manifest.json`, `apps/backend/tests/test_browser_extension_assets.py`, `apps/frontend/extension/README.md`, `.helloagents/modules/browser_extension.md`
 - **[browser_extension]**: 恢复右上角默认 Popup 为本地完整 `popup.html`，页面右下角运营助手 iframe 改为加载本地 `popup.html?embedded=1`，避免 HTTPS 飞猪页面嵌入 HTTP 云端 UI 触发混合内容拦截；`popup-shell` 与 `/ops-assistant` 云端页面保留为 HTTP 测试入口，等待 HTTPS 域名可用后再切回云端 UI。

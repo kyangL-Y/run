@@ -16,4 +16,7 @@ build/
 
 .playwright/
 apps/backend/.playwright/
+.claude/
+.claude/debug-*.log
+apps/extension/.artifacts/
 
