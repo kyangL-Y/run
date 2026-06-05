@@ -1,0 +1,4 @@
+{
+  "tests/test_competitor_service.py::CompetitorServiceTestCase::test_generate_room_price_trend_advice_uses_rule_fallback": true,
+  "tests/test_plugin_api_routes.py::PluginApiRoutesTestCase::test_plugin_room_price_trends_includes_advice": true
+}
